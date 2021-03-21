@@ -1,5 +1,5 @@
 [package]
-name = "glfw-sys"
+name = "glfw-static-vulkan-sys"
 version = "3.3.2"
 authors = ["Camilla Berglund <elmindreda@elmindreda.org>"]
 description = "An Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events"
@@ -12,7 +12,7 @@ build = "build.rs"
 links = "glfw"
 
 [lib]
-name = "glfw_sys"
+name = "glfw_static_vulkan_sys"
 path = "lib.rs"
 
 [build-dependencies]
