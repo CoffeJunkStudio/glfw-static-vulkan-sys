@@ -22,15 +22,16 @@ fn main() {
 
     let lib_dir = std::path::Path::new(&std::env::var("OUT_DIR").unwrap()).join("lib");
 
-    // Remove existing 'version-less' file, ignore if it didn't exist
-    let _ = std::fs::remove_file(lib_dir.join("libglfw.a"));
-
     // Create a 'version-less' glfw file from our freshly build glfw3 library.
     cfg_if::cfg_if! {
         if #[cfg(unix)] {
+
+            // Remove existing 'version-less' file, ignore if it didn't exist
+            let _ = std::fs::remove_file(lib_dir.join("libglfw.a"));
+
             std::os::unix::fs::symlink(lib_dir.join("libglfw3.a"), lib_dir.join("libglfw.a")).unwrap();
         } else if #[cfg(windows)] {
-            std::os::windows::fs::symlink_file(lib_dir.join("libglfw3.a"), lib_dir.join("libglfw.a")).unwrap();
+            std::fs::copy(lib_dir.join("glfw3.lib"), lib_dir.join("glfw.lib")).unwrap();
         } else {
             std::fs::copy(lib_dir.join("libglfw3.a"), lib_dir.join("libglfw.a")).unwrap();
         }
