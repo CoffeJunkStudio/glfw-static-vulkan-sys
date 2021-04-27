@@ -16,4 +16,5 @@ name = "glfw_static_vulkan_sys"
 path = "lib.rs"
 
 [build-dependencies]
+cfg-if = "1"
 cmake = "0.1"

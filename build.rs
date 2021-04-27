@@ -19,9 +19,25 @@ fn main() {
         .define("GLFW_VULKAN_STATIC", vulkan_static)
         .define("CMAKE_INSTALL_LIBDIR", "lib")
         .build();
-    
+
     let lib_dir = std::path::Path::new(&std::env::var("OUT_DIR").unwrap()).join("lib");
-    // Ignore existing symlink error
-    let _ = std::os::unix::fs::symlink(lib_dir.join("libglfw3.a"), lib_dir.join("libglfw.a"));
-    println!("cargo:rustc-link-search=native={}", dst.join("lib").display());
+
+    // Remove existing 'version-less' file, ignore if it didn't exist
+    let _ = std::fs::remove_file(lib_dir.join("libglfw.a"));
+
+    // Create a 'version-less' glfw file from our freshly build glfw3 library.
+    cfg_if::cfg_if! {
+        if #[cfg(unix)] {
+            std::os::unix::fs::symlink(lib_dir.join("libglfw3.a"), lib_dir.join("libglfw.a")).unwrap();
+        } else if #[cfg(windows)] {
+            std::os::windows::fs::symlink_file(lib_dir.join("libglfw3.a"), lib_dir.join("libglfw.a")).unwrap();
+        } else {
+            std::fs::copy(lib_dir.join("libglfw3.a"), lib_dir.join("libglfw.a")).unwrap();
+        }
+    }
+
+    println!(
+        "cargo:rustc-link-search=native={}",
+        dst.join("lib").display()
+    );
 }
