@@ -25,7 +25,6 @@ fn main() {
     // Create a 'version-less' glfw file from our freshly build glfw3 library.
     cfg_if::cfg_if! {
         if #[cfg(unix)] {
-
             // Remove existing 'version-less' file, ignore if it didn't exist
             let _ = std::fs::remove_file(lib_dir.join("libglfw.a"));
 
@@ -33,7 +32,7 @@ fn main() {
         } else if #[cfg(windows)] {
             std::fs::copy(lib_dir.join("glfw3.lib"), lib_dir.join("glfw.lib")).unwrap();
         } else {
-            std::fs::copy(lib_dir.join("libglfw3.a"), lib_dir.join("libglfw.a")).unwrap();
+            compile_error!("Unsupported platform. As of now only Unix & Windows are supported by glfw-static-vulkan-sys");
         }
     }
 
